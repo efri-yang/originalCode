@@ -13,7 +13,7 @@ mDialog是一款针对移动端的弹出框组件！<a href="https://wnworld.com
 *	[方法](#方法)
 
 ##	原创部分
-原创的代码部分
+原创的代码部分从createClass(第381行开始)
 <pre>
  var createClass = function (options, type) {
     this.opts = $.extend({}, mDialog.defaults, options);
