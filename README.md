@@ -1,5 +1,5 @@
 # mDialog
-mDialog是一款针对移动端的表单验证控件，为了在移动端屏幕和空间大小的情况下,快速实现弹框的效果！<a href="https://wnworld.com/mdialog/index.html" target="_blank">查看demo</a>
+mDialog是一款针对移动端的弹出框组件！<a href="https://wnworld.com/mdialog/index.html" target="_blank">查看demo</a>
 <p>手机扫码浏览</p>
 
 ![Image text](https://github.com/efri-yang/mdialog/blob/master/src/images/01.png)
@@ -7,12 +7,33 @@ mDialog是一款针对移动端的表单验证控件，为了在移动端屏幕�
 
 ##      	目录
 
-*	[特性](#特性)
+*	[原创部分](#原创部分)
 *	[调用方式](#调用方式)
 *	[参数](#参数)
 *	[方法](#方法)
 
-##	特性
+##	原创部分
+原创的代码部分
+<pre>
+ var createClass = function (options, type) {
+    this.opts = $.extend({}, mDialog.defaults, options);
+    this.opts._type = type;
+    this._init();
+};
+createClass.prototype._init = function () {
+    this.opts.uid = ExtraFunc.uuid();
+    this.opts.isAniming = false;
+    this.opts.scrollTop = 0;
+    mDialog.stack[this.opts.uid] = [];
+    if (!this.opts.duration) {
+        this.opts.animIn = this.opts.animOut = false;
+    }
+    this._renderContainer();
+    if (!!this.opts.shade) {
+        this._renderShade();
+    }
+}
+</pre>
 
 1.	适配flexible的rem自适应布局
 2.	深度接入animate.css(只要是animate.css的动画，只要传入名字就可以实现弹框进场和出场动画，而无需人工书写，一步到位)

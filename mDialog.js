@@ -1,17 +1,16 @@
-;(function (factory) {
-	if (typeof define === 'function' && define.amd ) {
-		define(['jquery'], function(jquery){
-			// 返回构造函数
-			factory(window.jQuery || window.Zepto, window, document); // 初始化插件	
-		});
-	}else if(typeof define === 'function' && define.cmd){
-		define(['jquery'], function(require,exports,moudles){
-			factory(require('jquery'),window, document); // 初始化插件
-		})
-	}else{
-		factory(jQuery,window, document);
-	}
-})(function($, window, document,undefined){
+; (function (factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['jquery'], function (jquery) {
+            factory(window.jQuery || window.Zepto, window, document); 
+        });
+    } else if (typeof define === 'function' && define.cmd) {
+        define(['jquery'], function (require, exports, moudles) {
+            factory(require('jquery'), window, document);
+        })
+    } else {
+        factory(jQuery, window, document);
+    }
+})(function ($, window, document, undefined) {
     var mDialog = {
         v: '0.0.1',
         stack: {},
@@ -35,15 +34,15 @@
             buttons: {},
             baseViewWidth: 750,
             baseViewHeight: 1344,
-            hasInput:false,
-            onBeforeShow: function() {},
-            onShow: function() {},
-            onBeforeClose: function() {},
-            onClose: function() {}
+            hasInput: false,
+            onBeforeShow: function () { },
+            onShow: function () { },
+            onBeforeClose: function () { },
+            onClose: function () { }
         }
     }
     var ExtraFunc = {
-        colorToRgba: function(colorStr, opacity) {
+        colorToRgba: function (colorStr, opacity) {
             colorStr = !!colorStr ? colorStr : "#000";
             var sColor = colorStr.toLowerCase();
             //没有传递，那么默认的是
@@ -66,15 +65,15 @@
                 return sColor;
             }
         },
-         dealCssEvent:function(eventNameArr, callback,duration) {
+        dealCssEvent: function (eventNameArr, callback, duration) {
             var events = eventNameArr,
-                called=false,
-                Timer=null,
+                called = false,
+                Timer = null,
                 i, dom = this; // jshint ignore:line
 
             function fireCallBack(e) {
                 /*jshint validthis:true */
-                called=true;
+                called = true;
                 if (e.target !== this) return;
                 callback.call(this, e);
                 for (i = 0; i < events.length; i++) {
@@ -84,15 +83,14 @@
             if (callback) {
                 for (i = 0; i < events.length; i++) {
                     dom.on(events[i], fireCallBack);
-                    Timer=setTimeout(function(){
-                       clearTimeout(Timer);
-                       !called &&callback();
-                    },duration)
+                    Timer = setTimeout(function () {
+                        clearTimeout(Timer);
+                        !called && callback();
+                    }, duration)
                 }
             }
-           
         },
-        uuid: function() {
+        uuid: function () {
             var s = [];
             var hexDigits = "0123456789abcdef";
             for (var i = 0; i < 36; i++) {
@@ -101,30 +99,26 @@
             s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
             s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
             s[8] = s[13] = s[18] = s[23] = "-";
-
             var uuid = s.join("");
             return uuid;
         },
-        isPercent: function(str) {
-            /*return /^((\d+\.?\d*)|(\d*\.\d+))\%$/.test(str);*/
+        isPercent: function (str) {
             return (typeof str == "string") ? ((str.indexOf("%") == -1) ? false : true) : false;
         },
-        isRem: function(str) {
-            // return /^((\d+\.?\d*rem)|(\d*\.\d+))*rem$/.test(str);
+        isRem: function (str) {
             return (typeof str == "string") ? ((str.indexOf("rem") == -1) ? false : true) : false;
         },
-        isPx: function(str) {
+        isPx: function (str) {
             return (typeof str == "string") ? ((str.indexOf("px") == -1) ? false : true) : false;
         },
-        removeAllSpace: function(str) {
+        removeAllSpace: function (str) {
             return str.replace(/\s+/g, "");
         },
-        getNumber: function(str) {
+        getNumber: function (str) {
             return str.match(/\d+(\.\d{0,2})?/)[0]
         }
     };
-
-    var deviceUtil = (function() {
+    var deviceUtil = (function () {
         var UA = window.navigator.userAgent,
             win = window,
             isAndroid = /android|adr/gi.test(UA),
@@ -137,21 +131,18 @@
             isIPhone: isIPhone
         }
     })();
-
-
-
     if (!$.fn.AnimationEnd) {
-        $.fn.AnimationEnd = function(callback,duration) {
-            var called=ExtraFunc.dealCssEvent.call(this, ['webkitAnimationEnd', 'animationend'], callback,duration);
+        $.fn.AnimationEnd = function (callback, duration) {
+            var called = ExtraFunc.dealCssEvent.call(this, ['webkitAnimationEnd', 'animationend'], callback, duration);
             return this;
         };
     }
     if (!$.fn.outerWidth) {
-        ['width', 'height'].forEach(function(dimension) {
-            var Dimension = dimension.replace(/./, function(m) {
+        ['width', 'height'].forEach(function (dimension) {
+            var Dimension = dimension.replace(/./, function (m) {
                 return m[0].toUpperCase();
             });
-            $.fn['outer' + Dimension] = function(margin) {
+            $.fn['outer' + Dimension] = function (margin) {
                 var elem = this;
                 if (elem) {
                     var size = elem[dimension]();
@@ -159,7 +150,7 @@
                         'width': ['left', 'right'],
                         'height': ['top', 'bottom']
                     };
-                    sides[dimension].forEach(function(side) {
+                    sides[dimension].forEach(function (side) {
                         if (margin) size += parseInt(elem.css('margin-' + side), 10);
                     });
                     return size;
@@ -169,7 +160,6 @@
             };
         });
     }
-
     function titleRender(opts) {
         var title = "";
         if (!!opts.title) {
@@ -181,29 +171,26 @@
         }
         return title;
     }
-
     function closeBtnRender(opts, indicator) {
         var $close = null;
         if (!!opts.closeBtn) {
             $close = $('<span class="mDialog-close"></span>');
-            $close.on(deviceUtil.tapEvent, function() {
-
+            $close.on(deviceUtil.tapEvent, function () {
                 indicator.close();
             })
         }
         return $close;
 
     };
-
     function buttonRender(opts, type, indicator) {
         var $btnContainer = ($.isArray(opts.buttons) || type == "confirm") ? $('<div class="mDialog-layer-btns"></div>') : null,
             _this = this;
         if ($.isArray(opts.buttons) && !!opts.buttons.length) {
-            $.each(opts.buttons, function(index, obj) {
+            $.each(opts.buttons, function (index, obj) {
                 obj.class = !!obj.class ? obj.class : "";
                 var $btn = $('<a href="javascript:void(0);" class="mDialog-btn ' + (obj.className ? obj.className : "") + '">' + obj.text + '</a>');
                 if (!!obj.callback) {
-                    $btn.on(deviceUtil.tapEvent, function(event) {
+                    $btn.on(deviceUtil.tapEvent, function (event) {
                         event.preventDefault();
                         obj.callback.call(indicator);
                     })
@@ -215,9 +202,6 @@
     };
 
     function setElemPos($elem, opts, $title, $main, $footer) {
-        //maxWidth、maxHeight 传递进来的值可能是  auto  80%  400px;
-        //width、height  传递进来的值可能是  auto  80%  400px;
-
         var elemW, elemH, winW, winH, realW, realH, maxW, maxH, offsetX, isOffsetX, offsetY, isOffsetY, titleH = 0,
             contentH = 0,
             footerH = 0,
@@ -226,24 +210,16 @@
             standardRatio, //flexible 基准缩放比
             isFlexible = !!(document.documentElement.style.fontSize && document.body.style.fontSize),
             unitRemPx = isFlexible ? "rem" : "px";
-
         winW = $(window).width();
         winH = $(window).height();
         dpr = document.documentElement.getAttribute('data-dpr');
-
-
         opts.offset[0] = (opts.offset[0] == "auto" || opts.offset[0] == "center") ? "auto" : ((opts.offset[0] == 0) ? "0px" : opts.offset[0].toLowerCase());
         opts.offset[1] = (opts.offset[1] == "auto" || opts.offset[1] == "center") ? "auto" : ((opts.offset[1] == 0) ? "0px" : opts.offset[1].toLowerCase());
-
         isOffsetX = (opts.offset[0] == "auto") ? false : true;
         isOffsetY = (opts.offset[1] == "auto") ? false : true;
-
-        //进行宽度计算
         elemW = $elem.outerWidth();
         opts.maxWidth = !!opts.maxWidth ? ((opts.maxWidth == "auto") ? "85%" : opts.maxWidth) : "85%";
         maxW = ExtraFunc.isPx(opts.maxWidth) ? ExtraFunc.getNumber(opts.maxWidth) : winW * ExtraFunc.getNumber(opts.maxWidth) / 100;
-
-        //对于百分比(%) auto px 的时候进行宽度的计算，
         if (opts.width == "auto" || !opts.width) {
             realW = (elemW > maxW) ? maxW : elemW;
             standardRatio = (dpr == 1 && winW > 540) ? 540 : winW;
@@ -295,24 +271,18 @@
                     "marginLeft": -realW / 2 + unitRemPx
                 })
             }
-
         } else {
             $elem.css({
                 left: "50%",
                 "marginLeft": -realW / 2 + unitRemPx
             })
         }
-
         $elem.css({
             width: realW + unitRemPx,
         })
-
-
-
         elemH = $elem.outerHeight();
         opts.maxHeight = !!opts.maxHeight ? ((opts.maxHeight == "auto") ? "80%" : opts.maxHeight) : "80%";
         maxH = ExtraFunc.isPx(opts.maxHeight) ? ExtraFunc.getNumber(opts.maxHeight) : winH * ExtraFunc.getNumber(opts.maxHeight) / 100;
-
         if (opts.height == "auto" || !opts.height) {
             realH = (elemH > maxH) ? maxH : elemH;
             standardRatio = (dpr == 1 && winW > 540) ? 540 : winW;
@@ -339,29 +309,22 @@
         !!$title && !!$title.length && (titleH = $title.outerHeight());
         !!$footer && !!$footer.length && (footerH = $footer.outerHeight());
         mainH = ((realH - titleH - footerH) > 0) ? (realH - titleH - footerH) : 0;
-
-
-
         if (isFlexible) {
             realH = realH / standardRatio * 10;
             mainH = mainH / standardRatio * 10;
         }
-
-
         if ((realH > maxH) || elemH > realH) {
             $main.addClass(fullClassName);
         }
         if (opts.width == opts.height && opts.width == "100%") {
             $elem.addClass('mDialog-layer-container-full')
         }
-
         $main.css({
             height: mainH + unitRemPx
         });
         $elem.css({
             height: realH + unitRemPx
         });
-
         if (isOffsetY) {
             if (ExtraFunc.isPx(opts.offset[1])) {
                 offsetY = ExtraFunc.isPx(opts.offset[1]) ? ExtraFunc.getNumber(opts.offset[1]) : winH * ExtraFunc.getNumber(opts.offset[1]) / 100;
@@ -394,7 +357,6 @@
             })
         }
     };
-
     function setAnim($elem, animInClass, animOutClass, duration, type, callback) {
         var called = false;
         animInClass = !!animInClass ? animInClass : "";
@@ -410,61 +372,50 @@
                 $elem.css({ "animation-duration": duration + "ms" }).removeClass(animOutClass).addClass(animInClass);
         }
 
-        $elem.AnimationEnd(function() {
+        $elem.AnimationEnd(function () {
 
             !!callback && callback.call();
-        },duration)
+        }, duration)
 
     }
-
-    var createClass = function(options, type) {
+    var createClass = function (options, type) {
         this.opts = $.extend({}, mDialog.defaults, options);
         this.opts._type = type;
         this._init();
     };
-    createClass.prototype._init = function() {
+    createClass.prototype._init = function () {
         this.opts.uid = ExtraFunc.uuid();
-        this.opts.isAniming=false;
-        this.opts.scrollTop=0;
+        this.opts.isAniming = false;
+        this.opts.scrollTop = 0;
         mDialog.stack[this.opts.uid] = [];
-
         if (!this.opts.duration) {
             this.opts.animIn = this.opts.animOut = false;
         }
         this._renderContainer();
-
         if (!!this.opts.shade) {
             this._renderShade();
         }
 
     }
-    createClass.prototype._renderContainer = function() {
+    createClass.prototype._renderContainer = function () {
         var _this = this,
             opts = this.opts,
             containerStr = "", //容器
             title = "", //标题
             content = "", //内容
-
             $container,
             $main,
             $closeBtn,
             $footerButton,
-
             containerClassName = "mDialog-layer-container",
             mainClassName = "mDialog-layer-main",
             titleClassName = "mDialog-layer-title",
-
             containerCloseHandle,
             contentCloseHandle;
-
-
         title = titleRender(opts);
         $closeBtn = closeBtnRender(opts, this);
         $footerButton = buttonRender(opts, this.opts, this);
-
         if (!opts._type) {
-            //如果没有type参数,那么说明 调用的方式是open() 
-            //判断 content的内容是不是页面的元素内容
             if (opts.content instanceof $ || $.zepto.isZ(opts.content)) {
                 //如果内容是jquery 或者zepto 对象，实行把容器包起来
                 $title = $(title);
@@ -477,7 +428,7 @@
                 $main = opts.content.parent();
                 $container = $main.parent();
                 !!title && $container.prepend($title);
-                contentCloseHandle = function() {
+                contentCloseHandle = function () {
                     $main.siblings().remove();
                     opts.content.css({
                         visibility: "hidden",
@@ -504,9 +455,7 @@
                     content = '<div class="mDialog-msg-section">' + opts.content + '</div>';
                     break;
             }
-
         }
-
         if (!$container) {
             containerStr = '<div class="' + containerClassName + '">' +
                 title +
@@ -516,15 +465,12 @@
                 '</div>';
             $container = $(containerStr);
             $container.appendTo($('body'));
-
             $title = $container.children('.' + titleClassName);
             $main = $container.children('.' + mainClassName);
-
-
         }
 
         if (!!opts.isPreventMove) {
-            $container.on("touchmove", function(event) {
+            $container.on("touchmove", function (event) {
                 event.preventDefault();
             })
         }
@@ -532,23 +478,23 @@
         !!$closeBtn && $closeBtn.appendTo($container);
         !!$footerButton && $footerButton.appendTo($container);
         $container.css({ "zIndex": mDialog.zIndex + 1, "visibility": "visible" });
-        containerCloseHandle = function() {
-            if(!!opts.hasInput){
-                $("html,body").css({"height":"auto","overflow":"visible"});
+        containerCloseHandle = function () {
+            if (!!opts.hasInput) {
+                $("html,body").css({ "height": "auto", "overflow": "visible" });
                 $(window).scrollTop(opts.scrollTop);
             }
-            
+
             !!opts.onBeforeClose && opts.onBeforeClose();
             if (opts.animOut) {
 
-                setAnim($container, opts.animIn, opts.animOut, opts.duration, "out", function() {
+                setAnim($container, opts.animIn, opts.animOut, opts.duration, "out", function () {
 
                     !!contentCloseHandle && contentCloseHandle();
                     $container.remove();
                     opts.onClose();
                 });
             } else {
-                setTimeout(function() {
+                setTimeout(function () {
                     !!contentCloseHandle && contentCloseHandle();
                     $container.remove();
                     opts.onClose();
@@ -562,32 +508,32 @@
         !!opts.onBeforeShow && opts.onBeforeShow();
         $container.css({ "zIndex": mDialog.zIndex + 1, "visibility": "visible" });
         if (opts.animIn) {
-            opts.isAniming=true;
-            setAnim($container, opts.animIn, opts.animOut, opts.duration, "in", function() {
+            opts.isAniming = true;
+            setAnim($container, opts.animIn, opts.animOut, opts.duration, "in", function () {
                 opts.onShow();
-                opts.isAniming=false;
-                !!opts.pause && setTimeout(function() {
+                opts.isAniming = false;
+                !!opts.pause && setTimeout(function () {
                     _this.close();
-                    
+
                 }, opts.pause)
             });
         } else {
             !!opts.onShow && opts.onShow();
-            !!opts.pause && setTimeout(function() {
+            !!opts.pause && setTimeout(function () {
                 _this.close();
-               
+
             }, opts.pause)
         }
-        if(!!opts.hasInput){
-            opts.scrollTop=$(window).scrollTop();
-            $("html,body").css({"height":"100%","overflow":"hidden"});
+        if (!!opts.hasInput) {
+            opts.scrollTop = $(window).scrollTop();
+            $("html,body").css({ "height": "100%", "overflow": "hidden" });
         }
         $container.removeSelf = containerCloseHandle;
         mDialog.stack[this.opts.uid].push($container);
-        
+
     };
 
-    createClass.prototype._renderShade = function() {
+    createClass.prototype._renderShade = function () {
         //opts.shade=true 如果需要遮罩
         var _this = this,
             opts = this.opts,
@@ -605,12 +551,12 @@
         styles["background-color"] = ExtraFunc.colorToRgba(rcolor, ropacity);
 
 
-        shadeCloseHandle = function() {
+        shadeCloseHandle = function () {
             if (!!opts.duration) {
                 !!$shade && $shade.removeClass("in").addClass('out');
-                $shade.AnimationEnd(function() {
+                $shade.AnimationEnd(function () {
                     $shade.remove();
-                },opts.duration)
+                }, opts.duration)
             } else {
                 $shade.remove();
             }
@@ -618,17 +564,16 @@
 
         if (this.opts.shadeClose) {
             //如果需要点击关闭遮罩层, 遮罩要关闭，主体要关闭
-            
-            $shade.on(deviceUtil.tapEvent, function(event) {
-                if(opts.isAniming) return;
+            $shade.on(deviceUtil.tapEvent, function (event) {
+                if (opts.isAniming) return;
                 event.stopPropagation();
                 _this.close();
             });
         } else {
-            $shade.on(deviceUtil.tapEvent, function(event) {
+            $shade.on(deviceUtil.tapEvent, function (event) {
                 event.stopPropagation();
             });
-            $shade.on("touchmove", function(event) {
+            $shade.on("touchmove", function (event) {
                 event.preventDefault();
                 event.stopPropagation();
             })
@@ -650,29 +595,28 @@
      * *
      * 通过调用 mDialog.close() 来关闭
      */
-    createClass.prototype.close = function(index) {
+    createClass.prototype.close = function (index) {
 
         var _this = this;
         sindex = !!index ? index : this.opts.uid;
-        $.each(mDialog.stack[sindex], function(index, obj) {
+        $.each(mDialog.stack[sindex], function (index, obj) {
             !!obj.removeSelf ? obj.removeSelf() : (!!obj.removeSelfOnlyFinal && obj.removeSelfOnlyFinal());
             if (index == mDialog.stack[sindex].length - 1) {
                 delete mDialog.stack[sindex];
             }
         });
-        
-         
+
+
     };
 
-    mDialog.open = function(options, type) {
+    mDialog.open = function (options, type) {
         mDialog.zIndex++;
         var o = new createClass(options, type);
         return o;
     };
 
-    mDialog.load = function(opts) {
+    mDialog.load = function (opts) {
         //load加载弹出框 不需要  title(标题) 关闭按钮(closeBnt)  button(按钮组)
-        //参数 是否显示遮罩  是否显示文字
         var options = !!$.isPlainObject(opts) ? opts : {};
         options.title = false;
         options.closeBtn = false;
@@ -680,39 +624,39 @@
         options.text = options.text === undefined ? true : (!!options.text ? options.text : false);
         return mDialog.open(options, "load");
     };
-    mDialog.confirm = function(opts) {
+    mDialog.confirm = function (opts) {
         var options = !!$.isPlainObject(opts) ? opts : {};
         options.closeBtn = false;
         options.animIn = !!opts.animIn ? opts.animIn : "mDialogBigIn";
         options.animOut = !!opts.animOut ? opts.animOut : "mDialogBigOut";
         options.duration = !!opts.duration ? opts.duration : 150;
-        options.width = !!opts.width ? opts.width : "80%";　
+        options.width = !!opts.width ? opts.width : "80%";
         options.buttons = ($.isArray(opts.buttons) && !!opts.buttons.length) ? opts.buttons : [{
-                text: "取消",
-                callback: function() {
-                    this.close();
-                }
-            },
-            {
-                text: "确认",
-                callback: !!opts.yes ? opts.yes : function() {}
+            text: "取消",
+            callback: function () {
+                this.close();
             }
+        },
+        {
+            text: "确认",
+            callback: !!opts.yes ? opts.yes : function () { }
+        }
         ]
         return mDialog.open(options, "comfirm")
     };
-    mDialog.msg = function(opts) {
+    mDialog.msg = function (opts) {
         var options = !!$.isPlainObject(opts) ? opts : {};
         options.closeBtn = false;
         options.shade = !!opts.shade ? opts.shade : false;
         options.pause = !!opts.pause ? opts.pause : 2000;
         return mDialog.open(options, "msg")
     };
-    mDialog.close = function(obj) {
+    mDialog.close = function (obj) {
         obj.close();
     };
-    mDialog.closeAll = function() {
-        $.each(mDialog.stack, function(index1, obj1) {
-            $.each(obj1, function(index2, obj2) {
+    mDialog.closeAll = function () {
+        $.each(mDialog.stack, function (index1, obj1) {
+            $.each(obj1, function (index2, obj2) {
                 obj2.removeSelf();
                 if (index2 == mDialog.stack[index1].length - 1) {
                     delete mDialog.stack[index1];
